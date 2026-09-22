@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capítulo 2 · Armado de PC — IT Essentials v7.0</title>
+<style>
+  :root{
+    --bg:#f7f7f8; --surface:#ffffff; --muted:#f0f0f2; --border:#e2e2e6;
+    --text:#1a1a1c; --text2:#55565c; --text3:#8b8c93;
+    --chip:#ececef; --accent:#1a1a1c;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#131316; --surface:#1c1c20; --muted:#26262c; --border:#34343c;
+      --text:#f0f0f2; --text2:#b6b7be; --text3:#7d7e86; --chip:#2b2b32; --accent:#f0f0f2; }
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    background:var(--bg); color:var(--text); line-height:1.55;}
+  .app{max-width:860px; margin:0 auto; padding:20px 16px 64px;}
+  header.app-head{padding:24px 0 8px;}
+  .kicker{font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--text3);}
+  h1{font-size:24px; font-weight:600; margin-top:4px;}
+  .sub{color:var(--text2); font-size:14px; margin-top:6px;}
+  .crumb{display:flex; align-items:center; gap:8px; margin:16px 0 12px; font-size:13px;}
+  .crumb button{background:none;border:none;color:var(--text2);cursor:pointer;font:inherit;
+    display:inline-flex;align-items:center;gap:6px;padding:6px 8px;border-radius:8px;}
+  .crumb button:hover{background:var(--muted); color:var(--text);}
+  .view{animation:fade .18s ease-out;}
+  @keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+  .folders{display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:12px; margin-top:12px;}
+  .folder{background:var(--surface); border:1px solid var(--border); border-radius:12px;
+    padding:16px; cursor:pointer; text-align:left; display:flex; flex-direction:column; gap:10px;
+    transition:border-color .15s, transform .15s; font:inherit; color:inherit;}
+  .folder:hover{border-color:var(--text3); transform:translateY(-2px);}
+  .folder .fico{width:36px;height:36px;border-radius:8px;background:var(--chip);
+    display:flex;align-items:center;justify-content:center;}
+  .folder .ft{font-weight:600; font-size:15px;}
+  .folder .fc{font-size:12px; color:var(--text3);}
+  .row{background:var(--surface); border:1px solid var(--border); border-radius:10px;
+    width:100%; padding:14px 16px; display:flex; align-items:center; gap:12px; cursor:pointer;
+    font:inherit; color:inherit; text-align:left; transition:border-color .15s; margin-bottom:8px;}
+  .row:hover{border-color:var(--text3);}
+  .row .rn{font-weight:500; font-size:15px; flex:1;}
+  .row .arrow{color:var(--text3); flex:none;}
+  .sec-title{font-size:19px; font-weight:600; margin:4px 0 4px;}
+  .sec-note{font-size:13px; color:var(--text2); margin-bottom:16px;}
+  article{background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px 22px;}
+  article h3{font-size:17px; font-weight:600; margin-bottom:12px;}
+  article p{margin:0 0 12px; font-size:15px; color:var(--text);}
+  article ul{margin:0 0 14px 20px; font-size:15px;}
+  article li{margin-bottom:6px;}
+  .steps{counter-reset:paso; margin:0 0 14px; list-style:none;}
+  .steps li{counter-increment:paso; position:relative; padding:10px 12px 10px 44px;
+    background:var(--muted); border-radius:8px; margin-bottom:8px; font-size:14.5px;}
+  .steps li::before{content:counter(paso); position:absolute; left:12px; top:10px;
+    width:22px;height:22px;border-radius:50%; background:var(--accent); color:var(--bg);
+    font-size:12px; font-weight:600; display:flex;align-items:center;justify-content:center;}
+  .tip{border-left:3px solid var(--text); background:var(--muted); border-radius:0 8px 8px 0;
+    padding:10px 14px; font-size:14px; color:var(--text); margin:0 0 14px;}
+  .tip b{font-weight:600;}
+  .lab{border:1px dashed var(--text3); border-radius:10px; padding:12px 14px; font-size:13.5px;
+    color:var(--text2); margin-top:16px;}
+  .terms{display:flex; flex-wrap:wrap; gap:8px; margin:4px 0 12px;}
+  .term{background:var(--chip); border-radius:6px; padding:6px 10px; font-size:13px;}
+  .kv{font-size:14.5px; margin-bottom:10px;}
+  .kv b{font-weight:600;}
+  footer{margin-top:28px; font-size:12px; color:var(--text3); text-align:center;}
+  svg{display:block;}
+</style>
+<base target="_blank">
+</head>
+<body>
+<div class="app">
+  <header class="app-head">
+    <div class="kicker">IT Essentials v7.0 · Guía interactiva</div>
+    <h1 id="appTitle">Capítulo 2: Armado de PC</h1>
+  </header>
+  <div class="crumb" id="crumb" style="display:none">
+    <button id="backBtn">← Volver</button>
+    <span id="crumbLabel" style="color:var(--text3)"></span>
+  </div>
+  <main id="main"></main>
+  <footer>Capítulo 2: Armado de PC · Materiales del instructor · IT Essentials v7.0</footer>
+</div>
+
+<script>
+const ICO = {
+  folder:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></svg>',
+  shield:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6l7-3z"/></svg>',
+  psu:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h4M7 12h4"/><circle cx="16.5" cy="12" r="2.5"/></svg>',
+  board:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6" rx="1"/><path d="M12 4v5M12 15v5M4 12h5M15 12h5"/></svg>',
+  drive:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="8" cy="12" r="1.6"/><path d="M13 10h5M13 14h5"/></svg>',
+  card:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="10" rx="2"/><path d="M7 7v10M11 7v10M15 7v10"/></svg>',
+  storage:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10"/><path d="M4 17a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2"/><path d="M9 12h6"/></svg>',
+  cable:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5v4a4 4 0 0 0 8 0V5"/><path d="M4 5h2M10 5h2"/><path d="M12 9c0 4 8 2 8 7v3"/><path d="M18 19h4"/></svg>',
+  book:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2V5z"/><path d="M4 19a2 2 0 0 1 2-2h13"/></svg>'
+};
+
+const DATA = [
+{ id:"seg", icon:"shield", title:"Seguridad general y contra incendios", subs:[
+  { t:"Precauciones generales de seguridad", blocks:[
+    {t:"p", x:"Antes de abrir y armar una computadora, el material del capítulo establece una serie de precauciones generales y de seguridad contra incendios para trabajar en una computadora. Estas precauciones protegen tanto al técnico como al equipo."},
+    {t:"list", items:[
+      "Quitarse relojes o joyas antes de trabajar en el interior del equipo.",
+      "Apagar y desenchufar los equipos antes de manipular cualquier componente interno.",
+      "Eliminar el desorden del espacio de trabajo para evitar tropiezos, daños a los componentes y riesgos de incendio.",
+      "Cubrir los bordes afilados del interior de la computadora para evitar cortes.",
+      "Usar gafas de seguridad durante el trabajo.",
+      "Aplicar procedimientos de elevación adecuados al mover o levantar equipos pesados."
+    ]}]},
+  { t:"Seguridad contra incendios", blocks:[
+    {t:"p", x:"La seguridad contra incendios es una parte explícita de las normas del capítulo. Al trabajar con fuentes de alimentación, energía eléctrica y componentes internos, el técnico debe conocer y verificar tres aspectos del extintor de incendios:"},
+    {t:"list", items:[
+      "Disponibilidad: el extintor debe estar disponible en el espacio de trabajo.",
+      "Categoría: el extintor debe ser de la categoría adecuada para el tipo de fuego que puede originarse.",
+      "Uso: el técnico debe saber usar correctamente el extintor de incendios."
+    ]},
+    {t:"p", x:"En conjunto, estas medidas forman el marco de seguridad con el que comienza el armado de la computadora, antes incluso de abrir el gabinete."}]}
+]},
+{ id:"psu", icon:"psu", title:"Apertura del gabinete y conexión de la fuente de alimentación", subs:[
+  { t:"Selección del gabinete y los ventiladores", blocks:[
+    {t:"p", x:"El capítulo detalla cinco criterios para seleccionar el gabinete y sus ventiladores:"},
+    {t:"kv", items:[
+      ["Tipo de modelo","la placa base determina el tipo de gabinete que se puede usar. El tamaño y la forma deben coincidir."],
+      ["Tamaño","si una computadora tiene muchos componentes, necesitará más espacio para que la circulación de aire mantenga el sistema refrigerado."],
+      ["Fuente de alimentación","elija una fuente de alimentación cuya corriente nominal y tipo de conexión coincidan con los de la placa base."],
+      ["Apariencia","hay muchos diseños de gabinete para elegir."],
+      ["Visualización de estado","las luces LED ubicadas en el exterior del gabinete indican si el sistema recibe alimentación, si el disco duro se encuentra en uso y si la computadora está en el modo de suspensión o de hibernación."]
+    ]}]},
+  { t:"Selección de una fuente de alimentación", blocks:[
+    {t:"p", x:"Al seleccionar la fuente de alimentación, la regla central del capítulo es la compatibilidad: la fuente debe coincidir con la placa base en corriente nominal y tipo de conexión. Una fuente cuya corriente nominal y cuyas conexiones no se adaptan a la placa base no sirve para el armado."},
+    {t:"p", x:"Esta compatibilidad también se retoma al seleccionar una placa base de reemplazo: las conexiones de fuente de alimentación existentes deben adaptarse a la nueva placa base."}]},
+  { t:"Instalación de la fuente de alimentación", blocks:[
+    {t:"steps", items:[
+      "Abra el gabinete de la computadora.",
+      "Alinee los orificios de tornillo de la fuente de alimentación con el montaje del gabinete de la computadora.",
+      "Atornille la fuente de alimentación en su lugar."
+    ]},
+    {t:"lab", x:"Práctica de laboratorio: instalación de la fuente de alimentación — en esta práctica de laboratorio, instalará una fuente de alimentación en un gabinete de computadora."}]}
+]},
+{ id:"mb", icon:"board", title:"Instalación de los componentes de la placa base", subs:[
+  { t:"Instalación de la CPU", blocks:[
+    {t:"steps", items:[
+      "Oriente la CPU hacia la ranura de la CPU.",
+      "Presione la CPU en la ranura de la CPU.",
+      "Bloquee la CPU en su lugar.",
+      "Aplique pegamento térmico a la CPU.",
+      "Instale el disipador térmico.",
+      "Asegure el disipador térmico."
+    ]}]},
+  { t:"Instalación de la RAM", blocks:[
+    {t:"steps", items:[
+      "Abra las palancas de la ranura de la RAM.",
+      "Oriente el chip de la RAM hacia la ranura de la placa base.",
+      "Baje el chip de la RAM en la ranura.",
+      "Presione firmemente para bloquear el chip de la RAM."
+    ]}]},
+  { t:"Instalación de la placa base", blocks:[
+    {t:"steps", items:[
+      "Alinee la placa base en la dirección correcta.",
+      "Ubique los separadores.",
+      "Instale los separadores en el gabinete de la computadora.",
+      "Alinee la placa de E/S a la parte posterior del gabinete de la computadora.",
+      "Baje la placa base en su lugar.",
+      "Instale los tornillos en los separadores."
+    ]},
+    {t:"lab", x:"Práctica de laboratorio: instalación de la placa base en una computadora — instalará una CPU, un conjunto de disipador térmico y ventilador, y módulos de RAM en la placa base. Luego, deberá instalar la placa base en el gabinete de la computadora."}]},
+  { t:"Selección de la placa base", blocks:[
+    {t:"p", x:"Al seleccionar una placa base de reemplazo, asegúrese de que admita o acepte lo siguiente:"},
+    {t:"list", items:[
+      "CPU.",
+      "RAM.",
+      "Adaptador de video, otras tarjetas adaptadoras.",
+      "El socket y el conjunto de chips de la placa base son compatibles con la CPU.",
+      "El conjunto de disipador térmico y ventilador existente si se vuelve a usar la CPU.",
+      "La cantidad y el tipo de ranuras de expansión: deben coincidir con las tarjetas adaptadoras existentes y permitir el uso de nuevas tarjetas.",
+      "Las conexiones de fuente de alimentación existentes deben adaptarse a la nueva placa base.",
+      "La nueva placa base debe caber en el gabinete actual de la computadora."
+    ]}]},
+  { t:"Selección de la CPU y la refrigeración de la CPU", blocks:[
+    {t:"p", x:"La CPU se instala orientándola hacia su ranura, presionándola, bloqueándola y luego aplicando pegamento térmico antes de montar y asegurar el disipador térmico. La refrigeración de la CPU depende de ese conjunto de disipador térmico y ventilador."},
+    {t:"p", x:"Al reemplazar la placa base y reutilizar la CPU, el conjunto de disipador térmico y ventilador existente debe ser admitido por la nueva placa base. El bus de la parte delantera (FSB), incluido entre los nuevos términos del capítulo, forma parte del vocabulario asociado a la CPU y a la placa base."}]},
+  { t:"Selección de la RAM", blocks:[
+    {t:"p", x:"Cuando hay una aplicación que se bloquea o la PC muestra mensajes de error frecuentemente, es posible que se necesite nueva RAM. Para determinar si el problema es la RAM, ejecute la prueba de RAM en el BIOS. El conjunto de chips debe admitir la velocidad de la nueva RAM."},
+    {t:"p", x:"La memoria también puede categorizarse como almacenada en búfer o no almacenada en búfer:"},
+    {t:"kv", items:[
+      ["Memoria no almacenada en búfer","es la memoria normal para las computadoras. La computadora lee los datos directamente de los bancos de memoria, lo que la convierte en una memoria más rápida que la memoria almacenada en búfer."],
+      ["Memoria almacenada en búfer","memoria especializada para servidores y estaciones de trabajo de alto nivel que usan grandes cantidades de RAM. Tienen un chip de control integrado en el módulo que ayuda al controlador de memoria en la administración de grandes cantidades de RAM."]
+    ]}]}
+]},
+{ id:"drv", icon:"drive", title:"Instalación de unidades internas", subs:[
+  { t:"Instalación del disco duro", blocks:[
+    {t:"steps", items:[
+      "Coloque la unidad de disco duro de modo que quede alineada con la abertura del conector para unidad. Los conectores de alimentación e interfaz deben estar orientados hacia la placa base.",
+      "Coloque la unidad de disco duro en el conector para unidad de modo que los orificios para tornillos de la unidad coincidan con los orificios para tornillos del gabinete.",
+      "Fije la unidad de disco duro al gabinete con los tornillos adecuados."
+    ]}]},
+  { t:"Instalación de la unidad óptica", blocks:[
+    {t:"steps", items:[
+      "En la parte delantera del gabinete, elija la bahía de unidad que desea que contenga la unidad. Elimine la placa frontal de esa bahía si es necesario.",
+      "Coloque la unidad óptica de modo que quede alineada con la abertura de la bahía de unidad de disco de 5,25 in (13,34 cm) en la parte delantera del gabinete.",
+      "Coloque la unidad óptica en la bahía de unidad de disco de modo que los orificios para tornillos de la unidad óptica coincidan con los orificios para tornillos del gabinete.",
+      "Fije la unidad óptica al gabinete con los tornillos adecuados."
+    ]},
+    {t:"tip", x:"Consejo de instalación: presione levemente todos los tornillos a mano antes de ajustarlos."},
+    {t:"lab", x:"Práctica de laboratorio: instalación de las unidades — en esta práctica de laboratorio, instalará el disco duro y las unidades ópticas."}]},
+  { t:"Selección de discos duros", blocks:[
+    {t:"p", x:"El capítulo dedica una sección a la selección de discos duros como parte de la instalación de unidades internas. Al instalar el disco duro, recuerde que sus conectores de alimentación e interfaz deben quedar orientados hacia la placa base, y que la conexión de datos se realiza con cable SATA entre el socket de la placa base y el puerto SATA más pequeño de la unidad."}]},
+  { t:"Selección de unidades ópticas: capacidades", blocks:[
+    {t:"p", x:"La selección de unidades ópticas se aborda en el capítulo a través de las capacidades de las unidades ópticas. Los formatos y capacidades que el capítulo introduce entre sus nuevos términos son los siguientes:"},
+    {t:"terms", items:["CD-ROM","CD-RW","DVD-ROM","DVD-RW","BD-ROM","BD-R","BD-RE"]},
+    {t:"p", x:"La unidad óptica se instala en una bahía de unidad de disco de 5,25 in (13,34 cm) en la parte delantera del gabinete."}]}
+]},
+{ id:"card", icon:"card", title:"Instalación de las tarjetas adaptadoras", subs:[
+  { t:"Selección de tarjetas adaptadoras", blocks:[
+    {t:"p", x:"Las tarjetas adaptadoras están diseñadas para realizar tareas específicas y agregan funcionalidades adicionales a la PC. Hay una variedad de tarjetas adaptadoras:"},
+    {t:"list", items:["Gráficos","Sonido","Controlador de almacenamiento","E/S","NIC","Captura"]},
+    {t:"p", x:"Las tarjetas adaptadoras se insertan en dos tipos de ranuras de expansión en una placa base:"},
+    {t:"kv", items:[
+      ["Interconexión de componentes periféricos (PCI)","ranura de expansión tradicional."],
+      ["PCI Express (PCIe)","tiene cuatro tipos de ranuras: x1, x4, x8 y x16."]
+    ]},
+    {t:"p", x:"El capítulo ilustra las ranuras PCI, PCIe x1 y PCIe x16 como los formatos de inserción de las tarjetas adaptadoras."}]},
+  { t:"Otros factores para la selección de tarjetas adaptadoras", blocks:[
+    {t:"p", x:"Más allá del tipo de ranura, el capítulo señala factores físicos y de compatibilidad que condicionan la selección e instalación de las tarjetas adaptadoras:"},
+    {t:"list", items:[
+      "Investigue la longitud de la tarjeta de video: puede que las tarjetas más grandes no sean compatibles con algunas placas base.",
+      "Algunas tarjetas adaptadoras pueden traer soportes de montaje de diferentes niveles para acomodar estos gabinetes.",
+      "Verifique que la cantidad y el tipo de ranuras de expansión de la placa base coincidan con las tarjetas adaptadoras existentes y permitan el uso de nuevas tarjetas."
+    ]}]},
+  { t:"Instalación de las tarjetas adaptadoras", blocks:[
+    {t:"steps", items:[
+      "Encuentre una ranura PCIe x16 vacía en el gabinete y elimine la pequeña cubierta metálica.",
+      "Alinee la tarjeta adaptadora de video con la ranura de expansión correspondiente en la placa base.",
+      "Presione suavemente la tarjeta adaptadora de video hasta que esté completamente asentada.",
+      "Fije el soporte de montaje de la tarjeta adaptadora de video al gabinete con el tornillo adecuado."
+    ]},
+    {t:"p", x:"Las tarjetas de expansión se instalan en una ranura adecuada en la placa base."},
+    {t:"tip", x:"Consejo de instalación: algunos gabinetes tienen ranuras pequeñas en la parte inferior del orificio donde se eliminó la cubierta. Deslice la parte inferior del soporte de montaje dentro de la ranura antes de asentar la tarjeta."},
+    {t:"lab", x:"Práctica de laboratorio: instalación de la tarjeta adaptadora — en esta práctica de laboratorio, instalará una NIC, una NIC inalámbrica y una tarjeta adaptadora de video."}]}
+]},
+{ id:"sto", icon:"storage", title:"Selección de almacenamiento adicional", subs:[
+  { t:"Selección de un lector de medios", blocks:[
+    {t:"p", x:"Se han desarrollado varios formatos de tarjetas de medios a lo largo de los años, como los siguientes:"},
+    {t:"terms", items:["Secure Digital (SD)","MicroSD","MiniSD","CompactFlash","Memory Stick","xD"]},
+    {t:"p", x:"Elija el lector de medios sobre la base de las necesidades actuales y futuras."}]},
+  { t:"Selección de almacenamiento externo", blocks:[
+    {t:"p", x:"Las unidades de memoria flash USB externas, que a veces se denominan dispositivos de memoria, se usan comúnmente como almacenamiento externo extraíble. Los dispositivos de almacenamiento externos se conectan a un puerto externo mediante puertos USB, eSATA o Thunderbolt."},
+    {t:"p", x:"Elija el tipo de dispositivo de almacenamiento externo adecuado para las necesidades del cliente. Por ejemplo, si el cliente necesita transferir una pequeña cantidad de datos, como una sola presentación, la unidad de memoria flash externa es una buena opción. Si el cliente necesita realizar una copia de seguridad o la transferencia de una gran cantidad de datos, elija un disco duro externo."}]}
+]},
+{ id:"cab", icon:"cable", title:"Instalación de los cables", subs:[
+  { t:"Conexión de los cables de alimentación internos", blocks:[
+    {t:"steps", items:[
+      "Alinee el conector de alimentación ATX de 24 pines con el socket de la placa base.",
+      "Presione suavemente el conector hasta que el clip se fije en su lugar.",
+      "Alinee el conector de fuente auxiliar de 4 pines con el socket de la placa base.",
+      "Presione suavemente el conector hasta que el clip se fije en su lugar.",
+      "Alinee el conector de alimentación del ventilador de la CPU con el socket de la placa base.",
+      "Presione suavemente el conector hasta que el clip se fije en su lugar."
+    ]}]},
+  { t:"Conexión de los cables de datos internos", blocks:[
+    {t:"steps", items:[
+      "Alinee el cable SATA y conecte un extremo al socket de la placa base.",
+      "Alinee el otro extremo del cable SATA y conéctelo en el puerto SATA más pequeño de la unidad."
+    ]},
+    {t:"lab", x:"Práctica de laboratorio: instalación de los cables internos — en esta práctica de laboratorio, instalará los cables internos de alimentación y datos en la computadora."}]},
+  { t:"Instalación de los cables del panel frontal", blocks:[
+    {t:"p", x:"Un gabinete de computadora suele tener un botón de encendido y luces de actividad visibles en la parte delantera del gabinete. El gabinete incluye cables del panel frontal que deben conectarse a un conector común del panel de sistema en una placa base. La escritura en la placa base cerca del conector del panel de sistema muestra dónde se conecta cada cable."},
+    {t:"steps", items:[
+      "Conecte el cable de alimentación al conector del panel de sistema en la ubicación marcada como PWR_SW.",
+      "Conecte el cable de reinicio al conector del panel de sistema en la ubicación marcada “RESET”.",
+      "Conecte el cable del LED de encendido al conector del panel de sistema en la ubicación marcada “PWR_LED”.",
+      "Conecte el cable de actividad LED al conector del panel de sistema en la ubicación marcada “HDD_LED”.",
+      "Conecte el cable del altavoz al conector del panel de sistema."
+    ]},
+    {t:"p", x:"Los conectores del panel de sistema incluyen: botón de encendido, botón de reinicio, LED de encendido, LED de actividad de la unidad, altavoz del sistema y audio."},
+    {t:"tip", x:"Los conectores del panel de sistema no están enchavetados. Sin embargo, cada cable del panel frontal generalmente tiene una flecha pequeña que indica el pin 1, y cada par de pines LED del conector del panel de sistema de la placa base tiene el pin 1 marcado con un signo más (+)."}]},
+  { t:"Conectores USB de la placa base", blocks:[
+    {t:"p", x:"Los nuevos gabinetes y placas base tienen capacidades USB 3.0 o USB 3.1. Los cables de conector USB suelen tener 9 o 10 pines dispuestos en dos filas. Estos cables se conectan a los conectores USB de la placa base."},
+    {t:"p", x:"Esta disposición permite dos conexiones USB; por lo tanto, los conectores USB suelen encontrarse en pares. En ocasiones, ambos conectores se encuentran juntos en una sola pieza y se pueden conectar a la totalidad del conector USB de la placa base."},
+    {t:"lab", x:"Práctica de laboratorio: instalación de los cables del panel frontal — en esta práctica de laboratorio, instalará los cables del panel frontal en la computadora."}]},
+  { t:"Finalización del armado de la computadora", blocks:[
+    {t:"steps", items:[
+      "Vuelva a colocar el panel frontal (si es necesario).",
+      "Conecte el cable de alimentación a la fuente de alimentación.",
+      "Oriente y conecte los cables USB a los puertos USB.",
+      "Oriente y conecte el cable de video al puerto de video en el adaptador de video.",
+      "Apriete los tornillos del cable de video al adaptador de video.",
+      "Conecte el cable de red al puerto Ethernet.",
+      "Conecte los cables de audio a los puertos de audio.",
+      "Coloque la cubierta del panel."
+    ]},
+    {t:"lab", x:"Práctica de laboratorio: finalización del armado de la computadora — en esta práctica de laboratorio, instalará los paneles laterales y los cables externos en la computadora."}]}
+]},
+{ id:"sum", icon:"book", title:"Resumen del capítulo y términos clave", subs:[
+  { t:"Conclusión y objetivos del capítulo", blocks:[
+    {t:"p", x:"El capítulo 2: Armado de la PC desarrolla las siguientes capacidades:"},
+    {t:"list", items:[
+      "Armar una computadora.",
+      "Definir las normas generales y de seguridad contra incendios.",
+      "Conectar la fuente de alimentación.",
+      "Instalar los componentes de la placa base.",
+      "Instalar las unidades internas.",
+      "Instalar las tarjetas adaptadoras.",
+      "Identificar el almacenamiento adicional.",
+      "Conectar los componentes de la computadora con los cables adecuados."
+    ]}]},
+  { t:"Nuevos términos y comandos", blocks:[
+    {t:"p", x:"El capítulo cierra con el vocabulario nuevo introducido durante el armado de la PC:"},
+    {t:"terms", items:["BD-R","BD-RE","BD-ROM","Memoria de búfer","CD-ROM","CD-RW","CompactFlash","DVD-ROM","DVD-RW","Bus de la parte delantera (FSB)","Tarjeta de E/S","Memory Stick","MicroSD","MiniSD","Secure Digital (SD)","Memoria no almacenada en búfer","xD"]}]}
+]}
+];
+
+const main = document.getElementById("main");
+const crumb = document.getElementById("crumb");
+const crumbLabel = document.getElementById("crumbLabel");
+const backBtn = document.getElementById("backBtn");
+let stack = [];
+
+function icon(name){ return ICO[name] || ICO.folder; }
+function showCrumb(label){ crumb.style.display = label ? "flex" : "none"; crumbLabel.textContent = label || ""; }
+
+function renderHome(){
+  stack = []; showCrumb("");
+  document.getElementById("appTitle").textContent = "Capítulo 2: Armado de PC";
+  main.innerHTML = '<div class="view"><div class="folders">' + DATA.map((d,i)=>
+    '<button class="folder" data-i="'+i+'"><span class="fico">'+icon(d.icon)+'</span>'+
+    '<span class="ft">'+d.title+'</span>'+
+    '<span class="fc">'+d.subs.length+' subtemas</span></button>').join("") + '</div></div>';
+  main.querySelectorAll(".folder").forEach(b=>b.onclick=()=>renderFolder(+b.dataset.i));
+  window.scrollTo({top:0});
+}
+
+function renderFolder(i){
+  const d = DATA[i]; stack = [{v:"folder", i}];
+  showCrumb(d.title);
+  document.getElementById("appTitle").textContent = d.title;
+  main.innerHTML = '<div class="view"><div class="sec-title">'+d.title+'</div>'+
+    '<div class="sec-note">Toca un subtema para ver su explicación completa.</div>'+
+    d.subs.map((s,j)=>'<button class="row" data-j="'+j+'">'+
+      '<span style="color:var(--text3)">'+icon(d.icon)+'</span>'+
+      '<span class="rn">'+s.t+'</span>'+
+      '<span class="arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></span>'+
+    '</button>').join("")+'</div>';
+  main.querySelectorAll(".row").forEach(b=>b.onclick=()=>renderDetail(i,+b.dataset.j));
+  window.scrollTo({top:0});
+}
+
+function renderDetail(i,j){
+  const d = DATA[i], s = d.subs[j]; stack = [{v:"folder",i},{v:"detail",i,j}];
+  showCrumb(d.title + " › " + s.t);
+  const html = s.blocks.map(b=>{
+    if(b.t==="p") return "<p>"+b.x+"</p>";
+    if(b.t==="list") return "<ul>"+b.items.map(x=>"<li>"+x+"</li>").join("")+"</ul>";
+    if(b.t==="steps") return '<ol class="steps">'+b.items.map(x=>"<li>"+x+"</li>").join("")+"</ol>";
+    if(b.t==="tip") return '<div class="tip"><b>Consejo.</b> '+b.x+"</div>";
+    if(b.t==="terms") return '<div class="terms">'+b.items.map(x=>'<span class="term">'+x+"</span>").join("")+"</div>";
+    if(b.t==="kv") return b.items.map(pair=>'<div class="kv"><b>'+pair[0]+':</b> '+pair[1]+"</div>").join("");
+    if(b.t==="lab") return '<div class="lab"><b>Práctica de laboratorio.</b> '+b.x+"</div>";
+    return "";
+  }).join("");
+  main.innerHTML = '<div class="view"><article><h3>'+s.t+'</h3>'+html+'</article></div>';
+  window.scrollTo({top:0});
+}
+
+backBtn.onclick = ()=>{
+  if(stack.length && stack[stack.length-1].v==="detail"){ renderFolder(stack[0].i); }
+  else renderHome();
+};
+
+renderHome();
+</script>
+</body>
+</html>
